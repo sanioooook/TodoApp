@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: todo_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo
+    ports:
+      - 5432:54320
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./backend/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    networks:
+      - app_network
+
+  api:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: todo_api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=todo;Username=postgres;Password=postgres"
+    ports:
+      - "5000:80"
+    networks:
+      - app_network
+    command: ["dotnet", "Todo.WebApi.dll"]
+
+volumes:
+  db_data:
+
+networks:
+  app_network:
+    driver: bridge
