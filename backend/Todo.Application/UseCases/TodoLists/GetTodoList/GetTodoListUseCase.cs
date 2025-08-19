@@ -1,39 +1,28 @@
-﻿namespace Todo.Application.UseCases.TodoLists.GetTodoList;
+﻿using Todo.Application.Common;
 
-using Enums;
+namespace Todo.Application.UseCases.TodoLists.GetTodoList;
+
+using FluentResults;
 using Interfaces;
 using Models;
 
-public class GetTodoListUseCase : IGetTodoListUseCase
+public class GetTodoListUseCase(IListRepository repository) : IGetTodoListUseCase
 {
-    private readonly IListRepository _repository;
-
-    public GetTodoListUseCase(IListRepository repository)
-    {
-        _repository = repository;
-    }
-
     /// <inheritdoc />
-    public async Task<GetTodoListResult> HandleAsync(GetTodoListQuery query, CancellationToken ct)
+    public async Task<Result<TodoListDto>> HandleAsync(GetTodoListQuery query, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(query.ListId, ct);
+        var list = await repository.GetByIdAsync(query.ListId, ct);
         if (list is null)
-            return new GetTodoListResult { HaveResult = false, CodeResult = ResultCode.NotFound, Message = "TodoList not found" };
+            return Result.Fail(Errors.NotFound("TodoList", query.ListId));
 
-        return new GetTodoListResult
+        return Result.Ok(new TodoListDto
         {
-            TodoListDto = new TodoListDto
-            {
-                Id = list.Id,
-                Title = list.Title,
-                CreatedAt = list.CreatedAt,
-                UpdatedAt = list.UpdatedAt,
-                OwnerId = list.OwnerId,
-                SharedWithUsers = list.Shares.Select(x => new TodoListShareDto { UserId = x.UserId }),
-            },
-            HaveResult = true,
-            CodeResult = ResultCode.Success,
-            Message = string.Empty,
-        };
+            Id = list.Id,
+            Title = list.Title,
+            CreatedAt = list.CreatedAt,
+            UpdatedAt = list.UpdatedAt,
+            OwnerId = list.OwnerId,
+            SharedWithUsers = list.Shares.Select(x => new TodoListShareDto { UserId = x.UserId, UserFullName = x.User.FullName }),
+        });
     }
 }

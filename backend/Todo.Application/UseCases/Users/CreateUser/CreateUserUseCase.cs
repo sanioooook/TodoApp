@@ -1,25 +1,20 @@
 ﻿namespace Todo.Application.UseCases.Users.CreateUser;
 
+using Common;
 using Domain.Entities;
-using Enums;
+using FluentResults;
 using Interfaces;
+using Models;
 
-public class CreateUserUseCase : ICreateUserUseCase
+public class CreateUserUseCase(IUserRepository userRepository) : ICreateUserUseCase
 {
-    private readonly IUserRepository _userRepository;
-
-    public CreateUserUseCase(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     /// <inheritdoc />
-    public async Task<CreateUserResult> ExecuteAsync(CreateUserCommand command, CancellationToken ct = default)
+    public async Task<Result<UserDto>> ExecuteAsync(CreateUserCommand command, CancellationToken ct = default)
     {
         // Check if email already exists
-        var existing = await _userRepository.GetByEmailAsync(command.Email, ct);
+        var existing = await userRepository.GetByEmailAsync(command.Email, ct);
         if (existing != null)
-            return new CreateUserResult { Success = false, Message = $"User with email {command.Email} has already created", CodeResult = ResultCode.Conflict};
+            return Result.Fail(Errors.Conflict($"User with email {command.Email} has already created"));
 
         var user = new User
         {
@@ -27,7 +22,13 @@ public class CreateUserUseCase : ICreateUserUseCase
             FullName = command.FullName,
         };
 
-        await _userRepository.AddAsync(user, ct);
-        return new CreateUserResult { Id = user.Id, Success = true, Message = "Successfully created User", CodeResult = ResultCode.Success};
+        await userRepository.AddAsync(user, ct);
+        return Result.Ok(new UserDto
+        {
+            CreatedAt = user.CreatedAt,
+            Email = user.Email,
+            FullName = user.FullName,
+            Id = user.Id,
+        });
     }
 }

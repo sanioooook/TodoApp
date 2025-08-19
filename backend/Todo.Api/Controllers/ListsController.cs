@@ -1,26 +1,29 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Todo.Application.Enums;
-using Todo.Application.Models;
-using Todo.Application.UseCases.TodoLists.CreateTodoList;
-using Todo.Application.UseCases.TodoLists.DeleteTodoList;
-using Todo.Application.UseCases.TodoLists.GetTodoList;
-using Todo.Application.UseCases.TodoLists.GetUserTodoLists;
-using Todo.Application.UseCases.TodoLists.ShareTodoList;
-using Todo.Application.UseCases.TodoLists.UnshareTodoList;
-using Todo.Application.UseCases.TodoLists.UpdateTodoList;
+﻿namespace Todo.Api.Controllers;
 
-namespace Todo.Api.Controllers;
+using Application.Models;
+using Application.UseCases.TodoLists.CreateTodoList;
+using Application.UseCases.TodoLists.DeleteTodoList;
+using Application.UseCases.TodoLists.GetTodoList;
+using Application.UseCases.TodoLists.GetUserTodoLists;
+using Application.UseCases.TodoLists.ShareTodoList;
+using Application.UseCases.TodoLists.UnshareTodoList;
+using Application.UseCases.TodoLists.UpdateTodoList;
+using Common;
+using Filters;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ListsController(ILogger<ListsController> _logger) : ControllerBase
+[TypeFilter(typeof(CurrentUserFilter))]
+public class ListsController(ILogger<ListsController> logger) : ControllerBase
 {
     /// <summary>
     /// Gets the TodoLists by user.
     /// </summary>
     /// <param name="getUserLists">The Use case.</param>
     /// <param name="validator">The validator.</param>
+    /// <param name="context">The HTTP context</param>
     /// <param name="skip">The skip.</param>
     /// <param name="take">The take.</param>
     /// <returns></returns>
@@ -31,22 +34,20 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
         [FromQuery] int skip = 0,
         [FromQuery] int take = 20)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-
         var query = new GetUserTodoListsQuery
         {
-            UserId = userId,
+            UserId = HttpContext.GetCurrentUserId(),
             Skip = skip,
             Take = take
         };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, query);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(query, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return (ActionResult)validationResult.ToActionResult();
 
         var result = await getUserLists.HandleAsync(query, HttpContext.RequestAborted);
-        return Ok(result);
+        
+        return (ActionResult)result.ToActionResult();
     }
 
     /// <summary>Shares the todoList.</summary>
@@ -58,35 +59,24 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
     public async Task<IActionResult> ShareList(Guid id,
         [FromBody] Guid targetUserId,
         [FromServices] IShareTodoListUseCase share,
-        [FromServices] IValidator<ShareTodoListCommand> validator
-        )
+        [FromServices] IValidator<ShareTodoListCommand> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-
         var command = new ShareTodoListCommand
         {
             ListId = id,
-            CurrentUserId = userId,
+            CurrentUserId = HttpContext.GetCurrentUserId(),
             TargetUserId = targetUserId
         };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
-        _logger.LogInformation("Try sharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
+        logger.LogInformation("Try sharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
 
         var result = await share.HandleAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-        {
-            _logger.LogInformation("Failure sharing TodoList {ListId} with user {UserId}. Error message {Message}", command.ListId, command.TargetUserId, result.Message);
-            return this.HandleNonSuccess(result);
-        }
-
-        _logger.LogInformation("Success sharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
-        return NoContent();
+        return result.ToActionResult();
     }
 
     /// <summary>Unshares the list.</summary>
@@ -95,36 +85,27 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
     /// <param name="unshare">The Use case.</param>
     /// <param name="validator">The validator.</param>
     [HttpPost("{id:guid}/unshare")]
-    public async Task<IActionResult> UnshareList(
+    public async Task<IActionResult> UnShareList(
         Guid id,
         [FromBody] Guid targetUserId,
         [FromServices] IUnshareTodoListUseCase unshare,
         [FromServices] IValidator<UnshareTodoListCommand> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-
         var command = new UnshareTodoListCommand
         {
             ListId = id,
-            CurrentUserId = userId,
+            CurrentUserId = HttpContext.GetCurrentUserId(),
             TargetUserId = targetUserId
         };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
-        _logger.LogInformation("Try unsharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
+        logger.LogInformation("Try unsharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
         var result = await unshare.HandleAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-        {
-            _logger.LogInformation("Failure unsharing TodoList {ListId} with user {UserId}. Error message {Message}", command.ListId, command.TargetUserId, result.Message);
-            return this.HandleNonSuccess(result);
-        }
-        _logger.LogInformation("Success unsharing TodoList {ListId} with user {UserId}", command.ListId, command.TargetUserId);
-        return NoContent();
+        return result.ToActionResult();
     }
 
     /// <summary>Gets the list by identifier.</summary>
@@ -138,19 +119,15 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
         [FromServices] IGetTodoListUseCase getList,
         [FromServices] IValidator<GetTodoListQuery> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-        var query = new GetTodoListQuery { UserId = userId, ListId = id };
+        var query = new GetTodoListQuery { UserId = HttpContext.GetCurrentUserId(), ListId = id };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, query);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(query, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await getList.HandleAsync(query, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return Ok(result.TodoListDto);
+        return result.ToActionResult();
     }
 
     /// <summary>Creates the TodoList.</summary>
@@ -164,21 +141,15 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
         [FromServices] ICreateTodoListUseCase create,
         [FromServices] IValidator<CreateTodoListCommand> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
+        var command = new CreateTodoListCommand { OwnerId = HttpContext.GetCurrentUserId(), Title = todoListCreateDto.Title };
 
-        var command = new CreateTodoListCommand { OwnerId = userId, Title = todoListCreateDto.Title };
-
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await create.HandleAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-
-        return CreatedAtAction(nameof(Create), new { id = result.TodoListDto.Id }, result.TodoListDto);
+        return result.ToActionResult();
     }
 
     /// <summary>Updates the specified TodoList by identifier.</summary>
@@ -191,19 +162,20 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
         [FromServices] IUpdateTodoListUseCase update,
         [FromServices] IValidator<UpdateTodoListCommand> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-        var command = new UpdateTodoListCommand { Id = updateDto.Id, CurrentUserId = userId, Title = updateDto.Title };
+        var command = new UpdateTodoListCommand
+        {
+            Id = updateDto.Id,
+            CurrentUserId = HttpContext.GetCurrentUserId(),
+            Title = updateDto.Title,
+        };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await update.HandleAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return NoContent();
+        return result.ToActionResult();
     }
 
     /// <summary>Deletes the TodoList by identifier.</summary>
@@ -216,23 +188,18 @@ public class ListsController(ILogger<ListsController> _logger) : ControllerBase
         [FromServices] IDeleteTodoListUseCase delete,
         [FromServices] IValidator<DeleteTodoListCommand> validator)
     {
-        if (!Guid.TryParse(Request.Headers["X-User-Id"], out var userId))
-            return BadRequest("X-User-Id header is missing or invalid.");
-
         var command = new DeleteTodoListCommand
         {
             Id = id,
-            CurrentUserId = userId
+            CurrentUserId = HttpContext.GetCurrentUserId()
         };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await delete.HandleAsync(command, HttpContext.RequestAborted);
-
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return NoContent();
+        
+        return result.ToActionResult();
     }
 }

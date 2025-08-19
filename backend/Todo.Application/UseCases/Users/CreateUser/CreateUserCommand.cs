@@ -1,7 +1,5 @@
 ﻿namespace Todo.Application.UseCases.Users.CreateUser;
 
-using System.ComponentModel.DataAnnotations;
-
 public class CreateUserCommand
 {
     /// <summary>
@@ -10,7 +8,6 @@ public class CreateUserCommand
     /// <value>
     /// The email.
     /// </value>
-    [Required]
     public string Email { get; set; }
 
     /// <summary>
@@ -19,6 +16,5 @@ public class CreateUserCommand
     /// <value>
     /// The full name.
     /// </value>
-    [Required]
     public string FullName { get; set; }
 }

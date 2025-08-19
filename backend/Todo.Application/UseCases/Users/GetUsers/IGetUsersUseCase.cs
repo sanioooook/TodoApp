@@ -1,4 +1,7 @@
-﻿namespace Todo.Application.UseCases.Users.GetUsers;
+﻿using FluentResults;
+using Todo.Application.Models;
+
+namespace Todo.Application.UseCases.Users.GetUsers;
 
 public interface IGetUsersUseCase
 {
@@ -8,5 +11,5 @@ public interface IGetUsersUseCase
     /// <param name="query">The query.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<IEnumerable<GetUsersResult>> ExecuteAsync(GetUsersQuery query, CancellationToken ct = default);
+    public Task<Result<IEnumerable<UserDto>>> ExecuteAsync(GetUsersQuery query, CancellationToken ct = default);
 }

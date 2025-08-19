@@ -1,7 +1,5 @@
 ﻿namespace Todo.Domain.Entities;
 
-using System.ComponentModel.DataAnnotations.Schema;
-
 public class User
 {
     public Guid Id { get; set; }

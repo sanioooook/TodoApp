@@ -1,5 +1,8 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.CreateTodoList;
 
+using FluentResults;
+using Models;
+
 public interface ICreateTodoListUseCase
 {
     /// <summary>
@@ -8,5 +11,5 @@ public interface ICreateTodoListUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    Task<CreateTodoListResult> HandleAsync(CreateTodoListCommand command, CancellationToken ct);
+    Task<Result<TodoListDto>> HandleAsync(CreateTodoListCommand command, CancellationToken ct);
 }

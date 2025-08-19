@@ -1,5 +1,7 @@
 ﻿namespace Todo.Application.UseCases.Users.UpdateUser;
 
+using FluentResults;
+
 public interface IUpdateUserUseCase
 {
     /// <summary>
@@ -8,5 +10,5 @@ public interface IUpdateUserUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<UpdateUserResult> ExecuteAsync(UpdateUserCommand command, CancellationToken ct = default);
+    public Task<Result> ExecuteAsync(UpdateUserCommand command, CancellationToken ct = default);
 }

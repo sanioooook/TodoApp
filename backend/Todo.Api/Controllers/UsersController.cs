@@ -1,14 +1,14 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Todo.Application.Enums;
-using Todo.Application.Models;
-using Todo.Application.UseCases.Users.CreateUser;
-using Todo.Application.UseCases.Users.DeleteUser;
-using Todo.Application.UseCases.Users.GetUserById;
-using Todo.Application.UseCases.Users.GetUsers;
-using Todo.Application.UseCases.Users.UpdateUser;
+﻿namespace Todo.Api.Controllers;
 
-namespace Todo.Api.Controllers;
+using Application.Models;
+using Application.UseCases.Users.CreateUser;
+using Application.UseCases.Users.DeleteUser;
+using Application.UseCases.Users.GetUserById;
+using Application.UseCases.Users.GetUsers;
+using Application.UseCases.Users.UpdateUser;
+using Common;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -27,16 +27,13 @@ public class UsersController : Controller
         [FromServices] ICreateUserUseCase createUserUseCase,
         [FromServices] IValidator<CreateUserCommand> validator)
     {
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await createUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return CreatedAtAction(nameof(Create), new { id = result.Id },
-            new UserDto { Id = result.Id, Email = command.Email, FullName = command.FullName });
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -52,15 +49,13 @@ public class UsersController : Controller
         [FromServices] IUpdateUserUseCase updateUserUseCase,
         [FromServices] IValidator<UpdateUserCommand> validator)
     {
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await updateUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return NoContent();
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -77,15 +72,13 @@ public class UsersController : Controller
     {
         var command = new DeleteUserCommand { Id = id };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, command);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await deleteUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return NoContent();
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -102,15 +95,13 @@ public class UsersController : Controller
     {
         var query = new GetUserByIdQuery { Id = id };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, query);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(query, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return validationResult.ToActionResult();
 
         var result = await getUserByIdUseCase.ExecuteAsync(query, HttpContext.RequestAborted);
 
-        if (result.CodeResult != ResultCode.Success)
-            return this.HandleNonSuccess(result);
-        return Ok(result.User);
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -122,7 +113,7 @@ public class UsersController : Controller
     /// <param name="take">The take.</param>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetUsersResult>>> GetAll(
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAll(
         [FromServices] IGetUsersUseCase getUsersUseCase,
         [FromServices] IValidator<GetUsersQuery> validator,
         [FromQuery] int skip = 0,
@@ -130,11 +121,11 @@ public class UsersController : Controller
     {
         var query = new GetUsersQuery { Skip = skip, Take = take };
 
-        var badRequest = await this.ValidateAndReturnIfInvalid(validator, query);
-        if (badRequest != null)
-            return badRequest;
+        var validationResult = await validator.ValidateWithResultAsync(query, HttpContext.RequestAborted);
+        if (validationResult.IsFailed)
+            return (ActionResult)validationResult.ToActionResult();
 
         var result = await getUsersUseCase.ExecuteAsync(query, HttpContext.RequestAborted);
-        return Ok(result);
+        return (ActionResult)result.ToActionResult();
     }
 }

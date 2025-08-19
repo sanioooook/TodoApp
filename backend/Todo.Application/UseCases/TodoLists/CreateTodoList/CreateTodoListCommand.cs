@@ -1,7 +1,5 @@
 namespace Todo.Application.UseCases.TodoLists.CreateTodoList;
 
-using System.ComponentModel.DataAnnotations;
-
 public class CreateTodoListCommand
 {
     /// <summary>
@@ -10,8 +8,6 @@ public class CreateTodoListCommand
     /// <value>
     /// The title.
     /// </value>
-    [Required]
-    [MaxLength(255)]
     public string Title { get; set; }
 
     /// <summary>
@@ -20,6 +16,5 @@ public class CreateTodoListCommand
     /// <value>
     /// The owner identifier.
     /// </value>
-    [Required]
     public Guid OwnerId { get; set; }
 }

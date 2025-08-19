@@ -1,7 +1,7 @@
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Reflection;
 using Todo.Api.Middleware;
 using Todo.Application;
 using Todo.Infrastructure;

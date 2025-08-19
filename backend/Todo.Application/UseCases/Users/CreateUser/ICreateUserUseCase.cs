@@ -1,5 +1,8 @@
 ﻿namespace Todo.Application.UseCases.Users.CreateUser;
 
+using FluentResults;
+using Models;
+
 public interface ICreateUserUseCase
 {
     /// <summary>
@@ -8,5 +11,5 @@ public interface ICreateUserUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<CreateUserResult> ExecuteAsync(CreateUserCommand command, CancellationToken ct = default);
+    public Task<Result<UserDto>> ExecuteAsync(CreateUserCommand command, CancellationToken ct = default);
 }

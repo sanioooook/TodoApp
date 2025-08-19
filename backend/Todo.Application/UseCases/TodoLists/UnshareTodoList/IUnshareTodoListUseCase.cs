@@ -1,5 +1,7 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.UnshareTodoList;
 
+using FluentResults;
+
 public interface IUnshareTodoListUseCase
 {
     /// <summary>
@@ -8,5 +10,5 @@ public interface IUnshareTodoListUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    Task<UnshareTodoListResult> HandleAsync(UnshareTodoListCommand command, CancellationToken ct);
+    Task<Result> HandleAsync(UnshareTodoListCommand command, CancellationToken ct);
 }

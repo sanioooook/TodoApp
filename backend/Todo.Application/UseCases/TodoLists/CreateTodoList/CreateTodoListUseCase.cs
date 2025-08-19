@@ -1,31 +1,20 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.CreateTodoList;
 
+using Common;
 using Domain.Entities;
-using Enums;
+using FluentResults;
 using Interfaces;
 using Models;
 
-public class CreateTodoListUseCase : ICreateTodoListUseCase
+public class CreateTodoListUseCase(IListRepository repository, IUserRepository userRepository) : ICreateTodoListUseCase
 {
-    private readonly IListRepository _repository;
-    private readonly IUserRepository _userRepository;
-
-    public CreateTodoListUseCase(IListRepository repository, IUserRepository userRepository)
-    {
-        _repository = repository;
-        _userRepository = userRepository;
-    }
-
     /// <inheritdoc />
-    public async Task<CreateTodoListResult> HandleAsync(CreateTodoListCommand command, CancellationToken ct)
+    public async Task<Result<TodoListDto>> HandleAsync(CreateTodoListCommand command, CancellationToken ct)
     {
-        var user = await _userRepository.GetByIdAsync(command.OwnerId, ct);
+        var user = await userRepository.GetByIdAsync(command.OwnerId, ct);
 
         if (user is null)
-            return new CreateTodoListResult { Success = false, Message = "OwnerId is wrong", CodeResult = ResultCode.BadRequest };
-
-        if (command.Title.Length is < 1 or > 255)
-            return new CreateTodoListResult { Success = false, Message = "Title length need be more 1 symbol and less 255", CodeResult = ResultCode.BadRequest };
+            return Result.Fail<TodoListDto>(Errors.Validation("OwnerId is wrong"));
 
         var entity = new TodoList
         {
@@ -33,22 +22,16 @@ public class CreateTodoListUseCase : ICreateTodoListUseCase
             OwnerId = command.OwnerId,
         };
 
-        await _repository.AddAsync(entity, ct);
+        await repository.AddAsync(entity, ct);
 
-        return new CreateTodoListResult
+        return Result.Ok(new TodoListDto
         {
-            TodoListDto = new TodoListDto
-            {
-                Title = entity.Title,
-                Id = entity.Id,
-                OwnerId = entity.OwnerId,
-                CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt,
-                SharedWithUsers = [],
-            },
-            Success = true,
-            Message = "Successfully created TodoList",
-            CodeResult = ResultCode.Success
-        };
+            Title = entity.Title,
+            Id = entity.Id,
+            OwnerId = entity.OwnerId,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt,
+            SharedWithUsers = [],
+        });
     }
 }

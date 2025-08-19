@@ -1,29 +1,22 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.DeleteTodoList;
 
-using Enums;
+using Common;
+using FluentResults;
 using Interfaces;
 
-public class DeleteTodoListUseCase : IDeleteTodoListUseCase
+public class DeleteTodoListUseCase(IListRepository repository) : IDeleteTodoListUseCase
 {
-    private readonly IListRepository _repository;
-
-    public DeleteTodoListUseCase(IListRepository repository)
-    {
-        _repository = repository;
-    }
-
     /// <inheritdoc />
-    public async Task<DeleteTodoListResult> HandleAsync(DeleteTodoListCommand command, CancellationToken ct)
+    public async Task<Result> HandleAsync(DeleteTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.Id, ct);
+        var list = await repository.GetByIdAsync(command.Id, ct);
         if (list == null)
-            return new DeleteTodoListResult { Success = false, Message = "TodoList not found", CodeResult = ResultCode.NotFound };
+            return Result.Fail(Errors.NotFound("TodoList", command.Id));
 
         if (list.OwnerId != command.CurrentUserId)
-            return new DeleteTodoListResult
-                { Success = false, Message = "TodoList can't be deleted. Only owner can delete", CodeResult = ResultCode.Forbidden };
+            return Result.Fail(Errors.Unauthorized("TodoList can't be deleted. Only owner can delete"));
 
-        await _repository.DeleteAsync(list, ct);
-        return new DeleteTodoListResult { Success = true, Message = "Successfully deleted TodoList", CodeResult = ResultCode.Success };
+        await repository.DeleteAsync(list, ct);
+        return Result.Ok();
     }
 }

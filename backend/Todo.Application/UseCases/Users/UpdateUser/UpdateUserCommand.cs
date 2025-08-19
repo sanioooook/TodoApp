@@ -1,7 +1,5 @@
 ﻿namespace Todo.Application.UseCases.Users.UpdateUser;
 
-using System.ComponentModel.DataAnnotations;
-
 public class UpdateUserCommand
 {
     /// <summary>
@@ -10,7 +8,6 @@ public class UpdateUserCommand
     /// <value>
     /// The identifier.
     /// </value>
-    [Required]
     public Guid Id { get; set; }
 
     /// <summary>

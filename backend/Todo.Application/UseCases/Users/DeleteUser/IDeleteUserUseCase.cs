@@ -1,5 +1,7 @@
 ﻿namespace Todo.Application.UseCases.Users.DeleteUser;
 
+using FluentResults;
+
 public interface IDeleteUserUseCase
 {
     /// <summary>
@@ -8,5 +10,5 @@ public interface IDeleteUserUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<DeleteUserResult> ExecuteAsync(DeleteUserCommand command, CancellationToken ct = default);
+    public Task<Result> ExecuteAsync(DeleteUserCommand command, CancellationToken ct = default);
 }

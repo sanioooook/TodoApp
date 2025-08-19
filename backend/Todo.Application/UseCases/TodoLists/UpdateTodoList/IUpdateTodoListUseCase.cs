@@ -1,5 +1,7 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.UpdateTodoList;
 
+using FluentResults;
+
 public interface IUpdateTodoListUseCase
 {
     /// <summary>
@@ -8,5 +10,5 @@ public interface IUpdateTodoListUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    Task<UpdateTodoListResult> HandleAsync(UpdateTodoListCommand command, CancellationToken ct);
+    Task<Result> HandleAsync(UpdateTodoListCommand command, CancellationToken ct);
 }

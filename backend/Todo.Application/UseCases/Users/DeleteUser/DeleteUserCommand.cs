@@ -1,6 +1,5 @@
 ﻿namespace Todo.Application.UseCases.Users.DeleteUser;
 
-using System.ComponentModel.DataAnnotations;
 
 public class DeleteUserCommand
 {
@@ -10,6 +9,5 @@ public class DeleteUserCommand
     /// <value>
     /// The identifier.
     /// </value>
-    [Required]
     public Guid Id { get; set; }
 }

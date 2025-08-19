@@ -1,31 +1,25 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.UpdateTodoList;
 
-using Enums;
+using Common;
+using FluentResults;
 using Interfaces;
 
-public class UpdateTodoListUseCase : IUpdateTodoListUseCase
+public class UpdateTodoListUseCase(IListRepository repository) : IUpdateTodoListUseCase
 {
-    private readonly IListRepository _repository;
-
-    public UpdateTodoListUseCase(IListRepository repository)
-    {
-        _repository = repository;
-    }
-
     /// <inheritdoc />
-    public async Task<UpdateTodoListResult> HandleAsync(UpdateTodoListCommand command, CancellationToken ct)
+    public async Task<Result> HandleAsync(UpdateTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.Id, ct);
+        var list = await repository.GetByIdAsync(command.Id, ct);
         if (list == null)
-            return new UpdateTodoListResult {Success = false, Message = "TodoList not found", CodeResult = ResultCode.NotFound};
+            return Result.Fail(Errors.NotFound("TodoList", command.Id));
 
         if (list.OwnerId != command.CurrentUserId && !list.Shares.Any(x => x.UserId.Equals(command.CurrentUserId)))
-            return new UpdateTodoListResult { Success = false, Message = "Only owner or linked user with TodoList can update TodoList", CodeResult = ResultCode.Forbidden};
+            return Result.Fail(Errors.Unauthorized("Only owner or linked user with TodoList can update TodoList"));
 
         list.Title = command.Title;
         list.UpdatedAt = DateTime.UtcNow;
 
-        await _repository.UpdateAsync(list, ct);
-        return new UpdateTodoListResult { Success = true, Message = "Successfully update TodoList", CodeResult = ResultCode.Success};
+        await repository.UpdateAsync(list, ct);
+        return Result.Ok();
     }
 }

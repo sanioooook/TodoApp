@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Todo.Application.UseCases.TodoLists.GetTodoList;
+﻿namespace Todo.Application.UseCases.TodoLists.GetTodoList;
 
 public class GetTodoListQuery
 {
@@ -10,7 +8,6 @@ public class GetTodoListQuery
     /// <value>
     /// The user identifier.
     /// </value>
-    [Required]
     public Guid UserId { get; set; }
 
     /// <summary>
@@ -19,6 +16,5 @@ public class GetTodoListQuery
     /// <value>
     /// The list identifier.
     /// </value>
-    [Required]
     public Guid ListId { get; set; }
 }

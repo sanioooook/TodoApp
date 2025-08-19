@@ -1,7 +1,5 @@
 ﻿namespace Todo.Application.UseCases.Users.GetUserById;
 
-using System.ComponentModel.DataAnnotations;
-
 public class GetUserByIdQuery
 {
     /// <summary>
@@ -10,6 +8,5 @@ public class GetUserByIdQuery
     /// <value>
     /// The identifier.
     /// </value>
-    [Required]
     public Guid Id { get; set; }
 }

@@ -1,41 +1,33 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.UnshareTodoList;
 
-using Enums;
+using Common;
+using FluentResults;
 using Interfaces;
 
-public class UnshareTodoListUseCase : IUnshareTodoListUseCase
+public class UnshareTodoListUseCase(IListRepository repository, IUserRepository userRepository) : IUnshareTodoListUseCase
 {
-    private readonly IListRepository _repository;
-    private readonly IUserRepository _userRepository;
-
-    public UnshareTodoListUseCase(IListRepository repository, IUserRepository userRepository)
-    {
-        _repository = repository;
-        _userRepository = userRepository;
-    }
-
     /// <inheritdoc />
-    public async Task<UnshareTodoListResult> HandleAsync(UnshareTodoListCommand command, CancellationToken ct)
+    public async Task<Result> HandleAsync(UnshareTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.ListId, ct);
-        var user = await _userRepository.GetByIdAsync(command.TargetUserId, ct);
+        var list = await repository.GetByIdAsync(command.ListId, ct);
+        var user = await userRepository.GetByIdAsync(command.TargetUserId, ct);
 
         if (user == null)
-            return new UnshareTodoListResult { Success = false, Message = "Target User not found", CodeResult = ResultCode.NotFound };
+            return Result.Fail(Errors.NotFound("User", command.TargetUserId));
 
         if (list == null)
-            return new UnshareTodoListResult { Success = false, Message = "TodoList not found", CodeResult = ResultCode.NotFound };
+            return Result.Fail(Errors.NotFound("TodoList", command.ListId));
 
         if (list.OwnerId.Equals(command.TargetUserId))
-            return new UnshareTodoListResult { Success = false, Message = "TodoList can't be unshared of owner", CodeResult = ResultCode.BadRequest };
-
+            return Result.Fail("TodoList can't be unshared of owner");
+        
         if (!list.OwnerId.Equals(command.CurrentUserId) && !list.Shares.Any(x => x.UserId.Equals(command.CurrentUserId)))
-            return new UnshareTodoListResult { Success = false, Message = "TodoList can't be unshared because current user not owner or linked", CodeResult = ResultCode.Forbidden };
+            return Result.Fail(Errors.Unauthorized("TodoList can't be unshared because current user not owner or linked"));
 
         var share = list.Shares.First(x => x.UserId == command.TargetUserId);
 
-        await _repository.RemoveShareAsync(share, ct);
+        await repository.RemoveShareAsync(share, ct);
 
-        return new UnshareTodoListResult { Success = true, Message = "Successfully unshared TodoList", CodeResult = ResultCode.Success };
+        return Result.Ok();
     }
 }

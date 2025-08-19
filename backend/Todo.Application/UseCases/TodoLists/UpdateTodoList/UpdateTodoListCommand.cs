@@ -10,7 +10,6 @@ public class UpdateTodoListCommand
     /// <value>
     /// The identifier.
     /// </value>
-    [Required]
     public Guid Id { get; set; }
 
     /// <summary>
@@ -19,8 +18,6 @@ public class UpdateTodoListCommand
     /// <value>
     /// The title.
     /// </value>
-    [Required]
-    [MaxLength(255)]
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
@@ -29,6 +26,5 @@ public class UpdateTodoListCommand
     /// <value>
     /// The owner identifier.
     /// </value>
-    [Required]
     public Guid CurrentUserId { get; set; }
 }

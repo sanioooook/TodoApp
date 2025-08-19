@@ -18,6 +18,7 @@ public class ListRepository : IListRepository
     {
         return await _context.TodoLists
             .Include(l => l.Shares)
+            .ThenInclude(l => l.User)
             .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
     }
 
@@ -26,6 +27,8 @@ public class ListRepository : IListRepository
     {
         return await _context.TodoLists
             .Where(l => l.OwnerId == userId)
+            .Include(x => x.Shares)
+            .ThenInclude(x => x.User)
             .Skip(skip).Take(take)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

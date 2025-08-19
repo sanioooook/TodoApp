@@ -1,7 +1,5 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.ShareTodoList;
 
-using System.ComponentModel.DataAnnotations;
-
 public class ShareTodoListCommand
 {
     /// <summary>
@@ -10,7 +8,6 @@ public class ShareTodoListCommand
     /// <value>
     /// The list identifier.
     /// </value>
-    [Required]
     public Guid ListId { get; set; }
 
     /// <summary>
@@ -19,7 +16,6 @@ public class ShareTodoListCommand
     /// <value>
     /// The current user identifier.
     /// </value>
-    [Required]
     public Guid CurrentUserId { get; set; }
 
     /// <summary>
@@ -28,6 +24,5 @@ public class ShareTodoListCommand
     /// <value>
     /// The target user identifier.
     /// </value>
-    [Required]
     public Guid TargetUserId { get; set; }
 }

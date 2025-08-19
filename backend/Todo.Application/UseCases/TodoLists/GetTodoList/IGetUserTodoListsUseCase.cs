@@ -1,5 +1,8 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.GetTodoList;
 
+using FluentResults;
+using Models;
+
 public interface IGetTodoListUseCase
 {
     /// <summary>
@@ -8,6 +11,6 @@ public interface IGetTodoListUseCase
     /// <param name="query">The query.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    Task<GetTodoListResult> HandleAsync(GetTodoListQuery query, CancellationToken ct);
+    Task<Result<TodoListDto>> HandleAsync(GetTodoListQuery query, CancellationToken ct);
 
 }
