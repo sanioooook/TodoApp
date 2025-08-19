@@ -5,6 +5,7 @@ namespace Todo.Application.UseCases.TodoLists.GetTodoList;
 using FluentResults;
 using Interfaces;
 using Models;
+using Todo.Application.Models.TodoList;
 
 public class GetTodoListUseCase(IListRepository repository) : IGetTodoListUseCase
 {

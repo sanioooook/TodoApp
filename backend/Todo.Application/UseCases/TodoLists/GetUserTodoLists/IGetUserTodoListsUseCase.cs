@@ -1,7 +1,7 @@
 ﻿namespace Todo.Application.UseCases.TodoLists.GetUserTodoLists;
 
 using FluentResults;
-using Models;
+using Models.TodoList;
 
 public interface IGetUserTodoListsUseCase
 {

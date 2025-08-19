@@ -1,6 +1,6 @@
-﻿namespace Todo.Application.Models;
+﻿namespace Todo.Application.Models.TodoList;
 
-public class TodoListUpdateDto
+public record TodoListUpdateDto
 {
     /// <summary>
     /// Gets or sets the identifier.

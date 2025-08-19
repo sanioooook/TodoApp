@@ -1,6 +1,6 @@
 ﻿namespace Todo.Api.Controllers;
 
-using Application.Models;
+using Application.Models.User;
 using Application.UseCases.Users.CreateUser;
 using Application.UseCases.Users.DeleteUser;
 using Application.UseCases.Users.GetUserById;
@@ -17,16 +17,17 @@ public class UsersController : Controller
     /// <summary>
     /// Creates the user.
     /// </summary>
-    /// <param name="command">The command.</param>
+    /// <param name="createUserDto">The create user dto.</param>
     /// <param name="createUserUseCase">The Use case.</param>
     /// <param name="validator">The validator.</param>
     /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateUserCommand command,
+        [FromBody] CreateUserDto createUserDto,
         [FromServices] ICreateUserUseCase createUserUseCase,
         [FromServices] IValidator<CreateUserCommand> validator)
     {
+        var command = new CreateUserCommand { FullName = createUserDto.FullName, Email = createUserDto.Email };
         var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();
@@ -36,19 +37,18 @@ public class UsersController : Controller
         return result.ToActionResult();
     }
 
-    /// <summary>
-    /// Updates the user.
-    /// </summary>
-    /// <param name="command">The command.</param>
+    /// <summary>Updates the user.</summary>
+    /// <param name="updateUserDto">The update user dto.</param>
     /// <param name="updateUserUseCase">The Use case.</param>
     /// <param name="validator">The validator.</param>
-    /// <returns></returns>
     [HttpPut]
     public async Task<IActionResult> Update(
-        [FromBody] UpdateUserCommand command,
+        [FromBody] UpdateUserDto updateUserDto,
         [FromServices] IUpdateUserUseCase updateUserUseCase,
         [FromServices] IValidator<UpdateUserCommand> validator)
     {
+        var command = new UpdateUserCommand
+            { Email = updateUserDto.Email, FullName = updateUserDto.FullName, Id = updateUserDto.Id };
         var validationResult = await validator.ValidateWithResultAsync(command, HttpContext.RequestAborted);
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();

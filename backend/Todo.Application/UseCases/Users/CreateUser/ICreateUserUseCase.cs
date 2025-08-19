@@ -1,7 +1,7 @@
 ﻿namespace Todo.Application.UseCases.Users.CreateUser;
 
 using FluentResults;
-using Models;
+using Models.User;
 
 public interface ICreateUserUseCase
 {

@@ -1,6 +1,6 @@
 ﻿namespace Todo.Api.Controllers;
 
-using Application.Models;
+using Application.Models.TodoList;
 using Application.UseCases.TodoLists.CreateTodoList;
 using Application.UseCases.TodoLists.DeleteTodoList;
 using Application.UseCases.TodoLists.GetTodoList;
@@ -23,7 +23,6 @@ public class ListsController(ILogger<ListsController> logger) : ControllerBase
     /// </summary>
     /// <param name="getUserLists">The Use case.</param>
     /// <param name="validator">The validator.</param>
-    /// <param name="context">The HTTP context</param>
     /// <param name="skip">The skip.</param>
     /// <param name="take">The take.</param>
     /// <returns></returns>

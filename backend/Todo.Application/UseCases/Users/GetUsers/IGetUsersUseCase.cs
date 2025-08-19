@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using Todo.Application.Models;
+using Todo.Application.Models.User;
 
 namespace Todo.Application.UseCases.Users.GetUsers;
 

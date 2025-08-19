@@ -1,7 +1,7 @@
 ﻿namespace Todo.Application.UseCases.Users.GetUserById;
 
 using FluentResults;
-using Models;
+using Models.User;
 
 public interface IGetUserByIdUseCase
 {

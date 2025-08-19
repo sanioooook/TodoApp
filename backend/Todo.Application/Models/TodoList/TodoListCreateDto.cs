@@ -1,6 +1,6 @@
-﻿namespace Todo.Application.Models;
+﻿namespace Todo.Application.Models.TodoList;
 
-public class TodoListCreateDto
+public record TodoListCreateDto
 {
     /// <summary>
     /// Gets or sets the title.

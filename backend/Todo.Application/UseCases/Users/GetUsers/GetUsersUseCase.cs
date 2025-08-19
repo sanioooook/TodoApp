@@ -2,7 +2,7 @@
 
 using FluentResults;
 using Interfaces;
-using Models;
+using Models.User;
 
 public class GetUsersUseCase(IUserRepository userRepository) : IGetUsersUseCase
 {

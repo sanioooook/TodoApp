@@ -1,6 +1,6 @@
-﻿namespace Todo.Application.Models;
+﻿namespace Todo.Application.Models.User;
 
-public class UserDto
+public record UpdateUserDto
 {
     /// <summary>
     /// Gets or sets the identifier.
@@ -16,7 +16,7 @@ public class UserDto
     /// <value>
     /// The email.
     /// </value>
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// Gets or sets the full name.
@@ -24,13 +24,5 @@ public class UserDto
     /// <value>
     /// The full name.
     /// </value>
-    public string FullName { get; set; }
-
-    /// <summary>
-    /// Gets or sets the created at.
-    /// </summary>
-    /// <value>
-    /// The created at.
-    /// </value>
-    public DateTime CreatedAt { get; set; }
+    public string? FullName { get; set; }
 }

@@ -4,7 +4,7 @@ using Common;
 using Domain.Entities;
 using FluentResults;
 using Interfaces;
-using Models;
+using Models.TodoList;
 
 public class CreateTodoListUseCase(IListRepository repository, IUserRepository userRepository) : ICreateTodoListUseCase
 {

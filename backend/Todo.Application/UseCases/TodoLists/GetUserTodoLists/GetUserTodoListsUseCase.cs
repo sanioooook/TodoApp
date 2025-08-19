@@ -2,7 +2,7 @@
 
 using FluentResults;
 using Interfaces;
-using Models;
+using Models.TodoList;
 
 public class GetUserTodoListsUseCase(IListRepository repository) : IGetUserTodoListsUseCase
 {

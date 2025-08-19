@@ -3,7 +3,7 @@
 using Common;
 using FluentResults;
 using Interfaces;
-using Models;
+using Models.User;
 
 public class GetUserByIdUseCase(IUserRepository userRepository) : IGetUserByIdUseCase
 {
