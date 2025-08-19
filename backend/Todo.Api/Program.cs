@@ -2,7 +2,8 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Todo.Api.Middleware;
-using Todo.CompositionRoot;
+using Todo.Application;
+using Todo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +12,9 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .CreateLogger();
 
-// DB
-builder.Services.AddApplicationAndInfrastructure(builder.Configuration);
+// Application & Infrastructure
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
