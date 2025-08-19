@@ -31,10 +31,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
         existing.Email = command.Email;
         existing.FullName = command.FullName;
 
-        var updated = await _userRepository.UpdateAsync(existing, ct);
-
-        if (!updated)
-            return new UpdateUserResult { Success = false, Message = "Error while updating User", CodeResult = ResultCode.ServerError };
+        await _userRepository.UpdateAsync(existing, ct);
 
         return new UpdateUserResult { Success = true, Message = "Successfully updated User", CodeResult = ResultCode.Success };
     }

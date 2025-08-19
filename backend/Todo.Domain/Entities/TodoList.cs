@@ -8,5 +8,7 @@ public class TodoList
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public List<TodoListShare> Shares { get; set; } = new();
+    // Navigation properties
+    public User? Owner { get; set; }
+    public ICollection<TodoListShare> Shares { get; set; } = new List<TodoListShare>();
 }

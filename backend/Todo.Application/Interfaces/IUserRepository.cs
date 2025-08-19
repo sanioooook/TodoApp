@@ -5,54 +5,54 @@ using Domain.Entities;
 public interface IUserRepository
 {
     /// <summary>
-    /// Gets the by identifier asynchronous.
+    /// Retrieves a <see cref="User"/> by its unique identifier asynchronously.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <param name="ct">The ct.</param>
-    /// <returns>user</returns>
-    Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    /// <param name="id">The <see cref="User.Id"/> to locate.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// The matching <see cref="User"/> or <c>null</c> if no user with the specified <paramref name="id"/> exists.
+    /// </returns>
+    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets the by email asynchronous.
+    /// Retrieves a <see cref="User"/> by its email address asynchronously.
     /// </summary>
-    /// <param name="email">The email.</param>
-    /// <param name="ct">The ct.</param>
-    /// <exception cref="ArgumentException"> if email is null or empty or have only whitespaces </exception>
-    /// <returns>user</returns>
-    Task<User?> GetByEmailAsync(string email, CancellationToken ct = default);
+    /// <param name="email">The email to search for.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// The matching <see cref="User"/> or <c>null</c> if no user with the specified <paramref name="email"/> exists.
+    /// </returns>
+    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets all asynchronous.
+    /// Retrieves a page of <see cref="User"/> records asynchronously.
     /// </summary>
-    /// <param name="skip">The skip.</param>
-    /// <param name="take">The take.</param>
-    /// <param name="ct">The ct.</param>
-    /// <returns>all users</returns>
-    Task<IEnumerable<User>> GetAllAsync(int skip, int take, CancellationToken ct = default);
+    /// <param name="skip">Number of records to skip for pagination.</param>
+    /// <param name="take">Maximum number of records to return.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// An <see cref="IEnumerable{User}"/> containing the requested page of users.
+    /// </returns>
+    Task<IEnumerable<User>> GetAllAsync(int skip, int take, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Adds the asynchronous.
+    /// Adds a new <see cref="User"/> to the store asynchronously.
     /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="ct">The ct.</param>
-    /// <exception cref="ArgumentNullException"> if user is null </exception>
-    /// <returns>true if created successfully; otherwise false</returns>
-    Task<bool> AddAsync(User user, CancellationToken ct = default);
+    /// <param name="user">The user entity to persist.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    Task AddAsync(User user, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Updates the asynchronous.
+    /// Updates an existing <see cref="User"/> in the store asynchronously.
     /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="ct">The ct.</param>
-    /// <exception cref="ArgumentNullException">if user is null</exception>
-    /// <returns>true if updated successfully; otherwise false</returns>
-    Task<bool> UpdateAsync(User user, CancellationToken ct = default);
+    /// <param name="user">The user entity with updated values.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    Task UpdateAsync(User user, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Deletes the asynchronous.
+    /// Removes a <see cref="User"/> from the store asynchronously.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <param name="ct">The ct.</param>
-    /// <returns>true if deleted successfully; otherwise false</returns>
-    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+    /// <param name="user">The user entity to delete.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    Task DeleteAsync(User user, CancellationToken cancellationToken = default);
 }

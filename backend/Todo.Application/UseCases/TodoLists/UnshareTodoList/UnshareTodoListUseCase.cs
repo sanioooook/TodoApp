@@ -17,7 +17,7 @@ public class UnshareTodoListUseCase : IUnshareTodoListUseCase
     /// <inheritdoc />
     public async Task<UnshareTodoListResult> HandleAsync(UnshareTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.ListId, command.CurrentUserId, ct);
+        var list = await _repository.GetByIdAsync(command.ListId, ct);
         var user = await _userRepository.GetByIdAsync(command.TargetUserId, ct);
 
         if (user == null)
@@ -32,10 +32,9 @@ public class UnshareTodoListUseCase : IUnshareTodoListUseCase
         if (!list.OwnerId.Equals(command.CurrentUserId) && !list.Shares.Any(x => x.UserId.Equals(command.CurrentUserId)))
             return new UnshareTodoListResult { Success = false, Message = "TodoList can't be unshared because current user not owner or linked", CodeResult = ResultCode.Forbidden };
 
-        var unshare = await _repository.RemoveShareAsync(command.ListId, command.TargetUserId, ct);
+        var share = list.Shares.First(x => x.UserId == command.TargetUserId);
 
-        if (!unshare)
-            return new UnshareTodoListResult { Success = false, Message = "Error while unsharing TodoList", CodeResult = ResultCode.ServerError };
+        await _repository.RemoveShareAsync(share, ct);
 
         return new UnshareTodoListResult { Success = true, Message = "Successfully unshared TodoList", CodeResult = ResultCode.Success };
     }

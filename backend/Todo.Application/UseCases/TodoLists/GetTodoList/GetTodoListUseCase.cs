@@ -16,11 +16,9 @@ public class GetTodoListUseCase : IGetTodoListUseCase
     /// <inheritdoc />
     public async Task<GetTodoListResult> HandleAsync(GetTodoListQuery query, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(query.ListId, query.UserId, ct);
+        var list = await _repository.GetByIdAsync(query.ListId, ct);
         if (list is null)
-        {
             return new GetTodoListResult { HaveResult = false, CodeResult = ResultCode.NotFound, Message = "TodoList not found" };
-        }
 
         return new GetTodoListResult
         {

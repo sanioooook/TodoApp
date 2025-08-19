@@ -36,7 +36,7 @@ public class DeleteTodoListUseCaseTests
             OwnerId = ownerId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockTodoList);
         _mockRepository.Setup(x => x.DeleteAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -62,7 +62,7 @@ public class DeleteTodoListUseCaseTests
             CurrentUserId = userId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, userId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((TodoList)null);
 
         // Act
@@ -93,7 +93,7 @@ public class DeleteTodoListUseCaseTests
             OwnerId = ownerId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, nonOwnerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockTodoList);
 
         // Act
@@ -123,7 +123,7 @@ public class DeleteTodoListUseCaseTests
             OwnerId = ownerId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockTodoList);
         _mockRepository.Setup(x => x.DeleteAsync(listId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);

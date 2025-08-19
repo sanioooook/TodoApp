@@ -27,21 +27,13 @@ public class CreateTodoListUseCase : ICreateTodoListUseCase
         if (command.Title.Length is < 1 or > 255)
             return new CreateTodoListResult { Success = false, Message = "Title length need be more 1 symbol and less 255", CodeResult = ResultCode.BadRequest };
 
-        var now = DateTime.UtcNow;
-
         var entity = new TodoList
         {
-            Id = Guid.NewGuid(),
             Title = command.Title,
             OwnerId = command.OwnerId,
-            CreatedAt = now,
-            UpdatedAt = now
         };
 
-        var created = await _repository.AddAsync(entity, ct);
-
-        if (!created)
-            return new CreateTodoListResult { Success = false, Message = "Error while creating TodoList", CodeResult = ResultCode.ServerError };
+        await _repository.AddAsync(entity, ct);
 
         return new CreateTodoListResult
         {

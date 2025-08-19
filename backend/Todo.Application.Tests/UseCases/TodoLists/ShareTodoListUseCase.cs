@@ -39,7 +39,7 @@ public class ShareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.AddShareAsync(listId, targetUserId, It.IsAny<CancellationToken>()))
@@ -75,7 +75,7 @@ public class ShareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -112,7 +112,7 @@ public class ShareTodoListUseCaseTests
                 }
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -139,7 +139,7 @@ public class ShareTodoListUseCaseTests
             TargetUserId = targetUserId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync((TodoList)null);
 
         // Act
@@ -174,7 +174,7 @@ public class ShareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, nonOwnerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -213,7 +213,7 @@ public class ShareTodoListUseCaseTests
                 }
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -247,7 +247,7 @@ public class ShareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.AddShareAsync(listId, targetUserId, It.IsAny<CancellationToken>()))

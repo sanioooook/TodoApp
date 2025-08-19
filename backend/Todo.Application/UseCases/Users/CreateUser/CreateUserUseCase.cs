@@ -23,15 +23,11 @@ public class CreateUserUseCase : ICreateUserUseCase
 
         var user = new User
         {
-            Id = Guid.NewGuid(),
             Email = command.Email,
             FullName = command.FullName,
-            CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _userRepository.AddAsync(user, ct);
-        if (!created)
-            return new CreateUserResult { Success = false, Message = "Error while creating User", CodeResult = ResultCode.ServerError};
+        await _userRepository.AddAsync(user, ct);
         return new CreateUserResult { Id = user.Id, Success = true, Message = "Successfully created User", CodeResult = ResultCode.Success};
     }
 }

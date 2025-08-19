@@ -25,19 +25,14 @@ Once the app is running, you can access Swagger UI at:
    cd TodoApp/backend/
    ```
 
-2. **Apply the database initialization script** (adjust connection string as needed):
-   ```bash
-   psql -h localhost -U postgres -d todo -f ./init_db.sql
-   ```
-
-3. **Run the application**:
+2. **Run the application**:
    ```bash
    dotnet restore
    dotnet build
    dotnet run --project TodoApp
    ```
 
-4. The application will be available at:
+3. The application will be available at:
    ```
    http://localhost:5000
    ```
@@ -53,12 +48,7 @@ Once the app is running, you can access Swagger UI at:
    docker build -t todo-app .
    ```
    
-2. **Apply the database initialization script** (adjust connection string as needed):
-   ```bash
-   psql -h localhost -U postgres -d todo -f ./init_db.sql
-   ```
-
-3. **Run the container**:
+2. **Run the container**:
    ```bash
    docker run -p 5000:80 todo-app
    ```
@@ -68,8 +58,6 @@ Once the app is running, you can access Swagger UI at:
 ## 3. Pull from GitHub Packages and Run with Docker Compose
 
 You don't need to clone the entire repository.
-
-**But you need download [`init_db.sql`](https://raw.githubusercontent.com/sanioooook/TodoApp/refs/heads/master/backend/init_db.sql) and store him neare `docker-compose.yml`**
 
 Just create a `docker-compose.yml` file anywhere of youre filesystem with the following content:
 
@@ -85,7 +73,6 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
     networks:
       - app_network
   todoapp:

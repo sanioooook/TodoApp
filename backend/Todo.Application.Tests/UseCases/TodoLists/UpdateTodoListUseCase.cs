@@ -40,7 +40,7 @@ public class UpdateTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<TodoList>(), It.IsAny<CancellationToken>()))
@@ -82,7 +82,7 @@ public class UpdateTodoListUseCaseTests
                 }
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, sharedUserId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<TodoList>(), It.IsAny<CancellationToken>()))
@@ -112,7 +112,7 @@ public class UpdateTodoListUseCaseTests
             CurrentUserId = userId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, userId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync((TodoList)null);
 
         // Act
@@ -148,7 +148,7 @@ public class UpdateTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, nonOwnerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -183,7 +183,7 @@ public class UpdateTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<TodoList>(), It.IsAny<CancellationToken>()))
@@ -225,7 +225,7 @@ public class UpdateTodoListUseCaseTests
 
         TodoList updatedList = null;
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<TodoList>(), It.IsAny<CancellationToken>()))

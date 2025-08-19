@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Todo.Api.Middleware;
@@ -70,4 +71,14 @@ if (app.Environment.IsDevelopment() || true)
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
+    if ((await db.Database.GetPendingMigrationsAsync()).Any())
+    {
+        db.Database.Migrate();
+    }
+}
+
 app.Run();

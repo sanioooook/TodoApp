@@ -49,7 +49,7 @@ public class UnshareTodoListUseCaseTests
             Id = targetUserId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))
@@ -88,7 +88,7 @@ public class UnshareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         // Act
@@ -114,7 +114,7 @@ public class UnshareTodoListUseCaseTests
             TargetUserId = targetUserId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync((TodoList)null);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))
@@ -156,7 +156,7 @@ public class UnshareTodoListUseCaseTests
             Id = targetUserId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))
@@ -197,7 +197,7 @@ public class UnshareTodoListUseCaseTests
             Shares = new List<TodoListShare>()
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, nonOwnerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))
@@ -237,7 +237,7 @@ public class UnshareTodoListUseCaseTests
                 }
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))
@@ -282,7 +282,7 @@ public class UnshareTodoListUseCaseTests
             Id = targetUserId
         };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, ownerId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(mockTodoList);
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(targetUserId, It.IsAny<CancellationToken>()))

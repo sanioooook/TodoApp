@@ -15,7 +15,7 @@ public class DeleteTodoListUseCase : IDeleteTodoListUseCase
     /// <inheritdoc />
     public async Task<DeleteTodoListResult> HandleAsync(DeleteTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.Id, command.CurrentUserId, ct);
+        var list = await _repository.GetByIdAsync(command.Id, ct);
         if (list == null)
             return new DeleteTodoListResult { Success = false, Message = "TodoList not found", CodeResult = ResultCode.NotFound };
 
@@ -23,10 +23,7 @@ public class DeleteTodoListUseCase : IDeleteTodoListUseCase
             return new DeleteTodoListResult
                 { Success = false, Message = "TodoList can't be deleted. Only owner can delete", CodeResult = ResultCode.Forbidden };
 
-        var deleted = await _repository.DeleteAsync(command.Id, ct);
-        if (!deleted)
-            return new DeleteTodoListResult
-                { Success = false, Message = "Error while deleting TodoList", CodeResult = ResultCode.ServerError };
+        await _repository.DeleteAsync(list, ct);
         return new DeleteTodoListResult { Success = true, Message = "Successfully deleted TodoList", CodeResult = ResultCode.Success };
     }
 }

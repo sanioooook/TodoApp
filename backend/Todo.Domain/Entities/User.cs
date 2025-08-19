@@ -8,9 +8,11 @@ public class User
 
     public string Email { get; set; } = null!;
 
-    [Column("full_name")]
     public string FullName { get; set; } = null!;
 
-    [Column("created_at")]
     public DateTime CreatedAt { get; set; }
+
+    // Navigation properties
+    public ICollection<TodoList> TodoLists { get; set; } = new List<TodoList>();
+    public ICollection<TodoListShare> SharedLists { get; set; } = new List<TodoListShare>();
 }

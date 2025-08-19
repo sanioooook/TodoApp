@@ -1,84 +1,57 @@
 ﻿namespace Todo.Infrastructure.Repositories;
 
 using Application.Interfaces;
-using Dapper;
-using DataAccess;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 public class UserRepository : IUserRepository
 {
-    private readonly IDapperExecutor _executor;
+    private readonly TodoDbContext _context;
 
-    public UserRepository(IDapperExecutor executor)
+    public UserRepository(TodoDbContext context)
     {
-        _executor = executor;
+        _context = context;
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        const string sql = "SELECT * FROM users WHERE id = @Id";
-        var user = await _executor.QueryFirstOrDefaultAsync<User>(new CommandDefinition(sql, new { Id = id },
-            cancellationToken: ct));
-        return user ?? null;
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetByEmailAsync(string email, CancellationToken ct = default)
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException(nameof(email));
-        const string sql = "SELECT * FROM users WHERE email = @email";
-        var user = await _executor.QueryFirstOrDefaultAsync<User>(
-            new CommandDefinition(sql, new { email }, cancellationToken: ct));
-
-        return user ?? null;
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<User>> GetAllAsync(int skip, int take, CancellationToken ct = default)
+    public async Task<IEnumerable<User>> GetAllAsync(int skip, int take, CancellationToken cancellationToken = default)
     {
-        const string sql = @"SELECT *
-                    FROM users
-                    ORDER BY created_at DESC
-                    OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
-        var users = await _executor.QueryAsync<User>(
-            new CommandDefinition(sql, new { Skip = skip, Take = take }, cancellationToken: ct));
-        return users;
+        return await _context.Users
+            .Skip(skip).Take(take)
+            .AsNoTracking().ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<bool> AddAsync(User user, CancellationToken ct = default)
+    public async Task AddAsync(User user, CancellationToken cancellationToken = default)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
-
-        user.CreatedAt = DateTime.UtcNow;
-
-        const string sql = @"INSERT INTO users (id, email, full_name, created_at)
-                             VALUES (@Id, @Email, @FullName, @CreatedAt)";
-        var affectedRows = await _executor.ExecuteAsync(new CommandDefinition(sql, user, cancellationToken: ct));
-        return affectedRows > 0;
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<bool> UpdateAsync(User user, CancellationToken ct = default)
+    public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
-
-        const string sql = @"UPDATE users
-                    SET email = @Email, full_name = @FullName
-                    WHERE id = @Id";
-        var affectedRows = await _executor.ExecuteAsync(new CommandDefinition(sql, user, cancellationToken: ct));
-        return affectedRows > 0;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task DeleteAsync(User user, CancellationToken cancellationToken = default)
     {
-        const string sql = "DELETE FROM users WHERE id = @Id";
-        var affectedRows = await _executor.ExecuteAsync(new CommandDefinition(sql, new { Id = id }, cancellationToken: ct));
-        return affectedRows > 0;
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

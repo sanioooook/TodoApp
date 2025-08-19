@@ -35,7 +35,7 @@ public class ListRepositoryGetByIdAsyncTests
             .Callback<CommandDefinition>(cmd => capturedCommand = cmd);
 
         // Act
-        await _repository.GetByIdAsync(id, userId, CancellationToken.None);
+        await _repository.GetByIdAsync(id, CancellationToken.None);
 
         // Assert
         _executorMock.Verify(e => e.QueryFirstOrDefaultAsync<TodoList>(It.IsAny<CommandDefinition>()), Times.Once);
@@ -71,7 +71,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ReturnsAsync(expectedShares);
 
         // Act
-        var result = await _repository.GetByIdAsync(id, userId, CancellationToken.None);
+        var result = await _repository.GetByIdAsync(id, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -92,7 +92,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ReturnsAsync((TodoList)null);
 
         // Act
-        var result = await _repository.GetByIdAsync(id, userId, CancellationToken.None);
+        var result = await _repository.GetByIdAsync(id, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
@@ -109,7 +109,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ThrowsAsync(new Exception("Database error"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _repository.GetByIdAsync(id, userId, CancellationToken.None));
+        await Assert.ThrowsAsync<Exception>(() => _repository.GetByIdAsync(id, CancellationToken.None));
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ThrowsAsync(new OperationCanceledException());
 
         // Act & Assert
-        await Assert.ThrowsAsync<OperationCanceledException>(() => _repository.GetByIdAsync(id, userId, cancellationTokenSource.Token));
+        await Assert.ThrowsAsync<OperationCanceledException>(() => _repository.GetByIdAsync(id, cancellationTokenSource.Token));
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ReturnsAsync(expectedShares);
 
         // Act
-        var result = await _repository.GetByIdAsync(id, userId, CancellationToken.None);
+        var result = await _repository.GetByIdAsync(id, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -173,7 +173,7 @@ public class ListRepositoryGetByIdAsyncTests
             .ReturnsAsync(expectedShares);
 
         // Act
-        var result = await _repository.GetByIdAsync(id, userId, CancellationToken.None);
+        var result = await _repository.GetByIdAsync(id, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);

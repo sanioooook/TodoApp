@@ -15,7 +15,7 @@ public class UpdateTodoListUseCase : IUpdateTodoListUseCase
     /// <inheritdoc />
     public async Task<UpdateTodoListResult> HandleAsync(UpdateTodoListCommand command, CancellationToken ct)
     {
-        var list = await _repository.GetByIdAsync(command.Id, command.CurrentUserId, ct);
+        var list = await _repository.GetByIdAsync(command.Id, ct);
         if (list == null)
             return new UpdateTodoListResult {Success = false, Message = "TodoList not found", CodeResult = ResultCode.NotFound};
 
@@ -25,9 +25,7 @@ public class UpdateTodoListUseCase : IUpdateTodoListUseCase
         list.Title = command.Title;
         list.UpdatedAt = DateTime.UtcNow;
 
-        var updated = await _repository.UpdateAsync(list, ct);
-        if (!updated)
-            return new UpdateTodoListResult { Success = false, Message = "Error wile updating TodoList", CodeResult = ResultCode.ServerError};
+        await _repository.UpdateAsync(list, ct);
         return new UpdateTodoListResult { Success = true, Message = "Successfully update TodoList", CodeResult = ResultCode.Success};
     }
 }

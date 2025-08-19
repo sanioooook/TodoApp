@@ -19,9 +19,7 @@ public class DeleteUserUseCase : IDeleteUserUseCase
         if (existing == null)
             return new DeleteUserResult { Success = false, Message = "User not found", CodeResult = ResultCode.NotFound };
 
-        var deleted = await _userRepository.DeleteAsync(command.Id, ct);
-        if (!deleted)
-            return new DeleteUserResult { Success = false, Message = "Error while deleting User", CodeResult = ResultCode.ServerError };
+        await _userRepository.DeleteAsync(existing, ct);
         return new DeleteUserResult { Success = true, Message = "User successfully deleted", CodeResult = ResultCode.Success };
     }
 }
