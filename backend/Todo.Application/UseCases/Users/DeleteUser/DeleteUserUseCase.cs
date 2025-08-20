@@ -7,7 +7,7 @@ using Interfaces;
 public class DeleteUserUseCase(IUserRepository userRepository) : IDeleteUserUseCase
 {
     /// <inheritdoc />
-    public async Task<Result> ExecuteAsync(DeleteUserCommand command, CancellationToken ct = default)
+    public async Task<Result> HandleAsync(DeleteUserCommand command, CancellationToken ct = default)
     {
         var existing = await userRepository.GetByIdAsync(command.Id, ct);
         if (existing == null)

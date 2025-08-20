@@ -9,7 +9,7 @@ using Models.User;
 public class CreateUserUseCase(IUserRepository userRepository) : ICreateUserUseCase
 {
     /// <inheritdoc />
-    public async Task<Result<UserDto>> ExecuteAsync(CreateUserCommand command, CancellationToken ct = default)
+    public async Task<Result<UserDto>> HandleAsync(CreateUserCommand command, CancellationToken ct = default)
     {
         // Check if email already exists
         var existing = await userRepository.GetByEmailAsync(command.Email, ct);

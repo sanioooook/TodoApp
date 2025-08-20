@@ -8,7 +8,7 @@ using Models.User;
 public class GetUserByIdUseCase(IUserRepository userRepository) : IGetUserByIdUseCase
 {
     /// <inheritdoc />
-    public async Task<Result<UserDto>> ExecuteAsync(GetUserByIdQuery query, CancellationToken ct = default)
+    public async Task<Result<UserDto>> HandleAsync(GetUserByIdQuery query, CancellationToken ct = default)
     {
         var user = await userRepository.GetByIdAsync(query.Id, ct);
         if (user is null)

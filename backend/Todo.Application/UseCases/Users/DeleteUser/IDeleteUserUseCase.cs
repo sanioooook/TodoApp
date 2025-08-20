@@ -10,5 +10,5 @@ public interface IDeleteUserUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<Result> ExecuteAsync(DeleteUserCommand command, CancellationToken ct = default);
+    public Task<Result> HandleAsync(DeleteUserCommand command, CancellationToken ct = default);
 }

@@ -1,139 +1,64 @@
-﻿using Todo.Application.Enums;
-
-namespace Todo.Application.Tests.UseCases.TodoLists;
+﻿namespace Todo.Application.Tests.UseCases.TodoLists;
 
 using Domain.Entities;
+using FluentAssertions;
 using Interfaces;
 using Moq;
 using Todo.Application.UseCases.TodoLists.DeleteTodoList;
 
 public class DeleteTodoListUseCaseTests
 {
-    private readonly Mock<IListRepository> _mockRepository;
+    private readonly Mock<IListRepository> _repoMock;
     private readonly DeleteTodoListUseCase _useCase;
 
     public DeleteTodoListUseCaseTests()
     {
-        _mockRepository = new Mock<IListRepository>();
-        _useCase = new DeleteTodoListUseCase(_mockRepository.Object);
+        _repoMock = new Mock<IListRepository>();
+        _useCase = new DeleteTodoListUseCase(_repoMock.Object);
     }
 
     [Fact]
-    public async Task DeleteTodoListUseCaseTests_DeleteWithValidOwner_ReturnsSuccess()
+    public async Task Should_Return_NotFound_When_List_Does_Not_Exist()
     {
-        // Arrange
-        var listId = Guid.NewGuid();
-        var ownerId = Guid.NewGuid();
-        var command = new DeleteTodoListCommand
-        {
-            Id = listId,
-            CurrentUserId = ownerId
-        };
+        var command = new DeleteTodoListCommand { Id = Guid.NewGuid(), CurrentUserId = Guid.NewGuid() };
 
-        var mockTodoList = new TodoList
-        {
-            Id = listId,
-            OwnerId = ownerId
-        };
+        _repoMock.Setup(r => r.GetByIdAsync(command.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((TodoList?)null);
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(mockTodoList);
-        _mockRepository.Setup(x => x.DeleteAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
-        // Act
         var result = await _useCase.HandleAsync(command, CancellationToken.None);
 
-        // Assert
-        Assert.True(result.Success);
-        Assert.Equal(ResultCode.Success, result.CodeResult);
-        Assert.Contains("Successfully deleted", result.Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.First().Metadata["ErrorCode"].Should().Be("NotFound");
     }
 
     [Fact]
-    public async Task DeleteTodoListUseCaseTests_DeleteNonExistingList_ReturnsNotFound()
+    public async Task Should_Return_Unauthorized_When_User_Is_Not_Owner()
     {
-        // Arrange
-        var listId = Guid.NewGuid();
+        var command = new DeleteTodoListCommand { Id = Guid.NewGuid(), CurrentUserId = Guid.NewGuid() };
+        var list = new TodoList { Id = command.Id, OwnerId = Guid.NewGuid(), Title = "Test" };
+
+        _repoMock.Setup(r => r.GetByIdAsync(command.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+
+        var result = await _useCase.HandleAsync(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+        result.Errors.First().Metadata["ErrorCode"].Should().Be("Unauthorized");
+    }
+
+    [Fact]
+    public async Task Should_Delete_When_User_Is_Owner()
+    {
         var userId = Guid.NewGuid();
-        var command = new DeleteTodoListCommand
-        {
-            Id = listId,
-            CurrentUserId = userId
-        };
+        var command = new DeleteTodoListCommand { Id = Guid.NewGuid(), CurrentUserId = userId };
+        var list = new TodoList { Id = command.Id, OwnerId = userId, Title = "Test" };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((TodoList)null);
+        _repoMock.Setup(r => r.GetByIdAsync(command.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
 
-        // Act
         var result = await _useCase.HandleAsync(command, CancellationToken.None);
 
-        // Assert
-        Assert.False(result.Success);
-        Assert.Equal(ResultCode.NotFound, result.CodeResult);
-        Assert.Contains("TodoList not found", result.Message);
-    }
-
-    [Fact]
-    public async Task DeleteTodoListUseCaseTests_DeleteByNonOwner_ReturnsForbidden()
-    {
-        // Arrange
-        var listId = Guid.NewGuid();
-        var ownerId = Guid.NewGuid();
-        var nonOwnerId = Guid.NewGuid();
-        var command = new DeleteTodoListCommand
-        {
-            Id = listId,
-            CurrentUserId = nonOwnerId
-        };
-
-        var mockTodoList = new TodoList
-        {
-            Id = listId,
-            OwnerId = ownerId
-        };
-
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(mockTodoList);
-
-        // Act
-        var result = await _useCase.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        Assert.False(result.Success);
-        Assert.Equal(ResultCode.Forbidden, result.CodeResult);
-        Assert.Contains("TodoList can't be deleted", result.Message);
-    }
-
-    [Fact]
-    public async Task DeleteTodoListUseCaseTests_FailedToDelete_ReturnsError()
-    {
-        // Arrange
-        var listId = Guid.NewGuid();
-        var ownerId = Guid.NewGuid();
-        var command = new DeleteTodoListCommand
-        {
-            Id = listId,
-            CurrentUserId = ownerId
-        };
-
-        var mockTodoList = new TodoList
-        {
-            Id = listId,
-            OwnerId = ownerId
-        };
-
-        _mockRepository.Setup(x => x.GetByIdAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(mockTodoList);
-        _mockRepository.Setup(x => x.DeleteAsync(listId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        // Act
-        var result = await _useCase.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        Assert.False(result.Success);
-        Assert.Equal(ResultCode.ServerError, result.CodeResult);
-        Assert.Contains("Error while deleting", result.Message);
+        result.IsSuccess.Should().BeTrue();
+        _repoMock.Verify(r => r.DeleteAsync(list, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

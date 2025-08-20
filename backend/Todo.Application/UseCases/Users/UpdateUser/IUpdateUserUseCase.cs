@@ -10,5 +10,5 @@ public interface IUpdateUserUseCase
     /// <param name="command">The command.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<Result> ExecuteAsync(UpdateUserCommand command, CancellationToken ct = default);
+    public Task<Result> HandleAsync(UpdateUserCommand command, CancellationToken ct = default);
 }

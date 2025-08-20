@@ -32,7 +32,7 @@ public class UsersController : Controller
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();
 
-        var result = await createUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
+        var result = await createUserUseCase.HandleAsync(command, HttpContext.RequestAborted);
 
         return result.ToActionResult();
     }
@@ -53,7 +53,7 @@ public class UsersController : Controller
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();
 
-        var result = await updateUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
+        var result = await updateUserUseCase.HandleAsync(command, HttpContext.RequestAborted);
 
         return result.ToActionResult();
     }
@@ -76,7 +76,7 @@ public class UsersController : Controller
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();
 
-        var result = await deleteUserUseCase.ExecuteAsync(command, HttpContext.RequestAborted);
+        var result = await deleteUserUseCase.HandleAsync(command, HttpContext.RequestAborted);
 
         return result.ToActionResult();
     }
@@ -99,7 +99,7 @@ public class UsersController : Controller
         if (validationResult.IsFailed)
             return validationResult.ToActionResult();
 
-        var result = await getUserByIdUseCase.ExecuteAsync(query, HttpContext.RequestAborted);
+        var result = await getUserByIdUseCase.HandleAsync(query, HttpContext.RequestAborted);
 
         return result.ToActionResult();
     }
@@ -125,7 +125,7 @@ public class UsersController : Controller
         if (validationResult.IsFailed)
             return (ActionResult)validationResult.ToActionResult();
 
-        var result = await getUsersUseCase.ExecuteAsync(query, HttpContext.RequestAborted);
+        var result = await getUsersUseCase.HandleAsync(query, HttpContext.RequestAborted);
         return (ActionResult)result.ToActionResult();
     }
 }

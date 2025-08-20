@@ -11,5 +11,5 @@ public interface IGetUsersUseCase
     /// <param name="query">The query.</param>
     /// <param name="ct">The <see cref="CancellationToken"/>.</param>
     /// <returns></returns>
-    public Task<Result<IEnumerable<UserDto>>> ExecuteAsync(GetUsersQuery query, CancellationToken ct = default);
+    public Task<Result<IEnumerable<UserDto>>> HandleAsync(GetUsersQuery query, CancellationToken ct = default);
 }

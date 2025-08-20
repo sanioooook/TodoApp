@@ -7,7 +7,7 @@ using Interfaces;
 public class UpdateUserUseCase(IUserRepository userRepository) : IUpdateUserUseCase
 {
     /// <inheritdoc />
-    public async Task<Result> ExecuteAsync(UpdateUserCommand command, CancellationToken ct = default)
+    public async Task<Result> HandleAsync(UpdateUserCommand command, CancellationToken ct = default)
     {
         var existing = await userRepository.GetByIdAsync(command.Id, ct);
         if (existing == null)
